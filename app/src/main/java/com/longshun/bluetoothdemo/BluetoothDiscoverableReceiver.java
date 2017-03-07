@@ -38,6 +38,35 @@ public class BluetoothDiscoverableReceiver extends BroadcastReceiver {
             //老的扫描模式
             int preScanMode = intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_SCAN_MODE,-100);
             Log.d(TAG, "onReceive: 老的扫描模式"+preScanMode);
+        }else if(BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(action)){
+            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+            switch (device.getBondState()) {
+                case BluetoothDevice.BOND_BONDING:
+                    Log.d(TAG, "正在配对......");
+                    if (iBondStateListener != null) {
+                        iBondStateListener.bonding(device);
+                    }
+                    break;
+                case BluetoothDevice.BOND_BONDED:
+                    Log.d(TAG, "完成配对");
+                    if (iBondStateListener != null) {
+                        iBondStateListener.bondSuccess(device);
+                    }
+                    break;
+                case BluetoothDevice.BOND_NONE:
+                    Log.d(TAG, "取消配对");
+                    if (iBondStateListener != null) {
+                        iBondStateListener.bondFail(device);
+                    }
+                default:
+                    break;
+            }
         }
+    }
+
+    private IBondStateListener iBondStateListener;
+
+    public void setiBondStateListener(IBondStateListener iBondStateListener) {
+        this.iBondStateListener = iBondStateListener;
     }
 }
