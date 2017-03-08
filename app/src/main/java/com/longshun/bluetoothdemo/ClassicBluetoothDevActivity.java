@@ -315,33 +315,31 @@ public class ClassicBluetoothDevActivity extends AppCompatActivity implements Bl
 
         public void run() {
             // TODO: 2017/3/4 处理连接部分
-            connecting = true;
-            connected = false;
             // Cancel discovery because it will slow down the connection
             if (bluetoothAdapter != null) {
                 bluetoothAdapter.cancelDiscovery();
                 Log.d(TAG, "run: 取消扫描");
             }
 
-            while (!connected && connectTime <= 10){
+            while (true){
                 try {
                     // Connect the device through the socket. This will block
                     // until it succeeds or throws an exception
                     mmSocket.connect();
                     connected = true;
                     Log.d(TAG, "run: 连接成功");
+                    // TODO: 2017/3/8  
                 } catch (IOException connectException) {
                     // Unable to connect; close the socket and get out
                     connected = false;
                     connectTime++;
                     try {
-                        mmSocket.close();
+                        //mmSocket.close();
                         Log.d(TAG, "run: 关闭客户端socket"+connectTime);
-                    } catch (IOException closeException) {
+                    } catch (Exception closeException) {
                     }
-                    return;
+                    //return;
                 } finally {
-                    connecting = false;
                 }
             }
         }
